@@ -163,13 +163,14 @@ def is_url(string):
     except:
         return False
 
-def download_captions(captions_url):
+def docaptions_url):
     """Download captions from the given URL."""
     try:
         logger.info(f"Downloading captions from URL: {captions_url}")
         response = requests.get(captions_url)
         response.raise_for_status()
         logger.info("Captions downloaded successfully.")
+        response.encoding = 'utf-8'
         return response.text
     except Exception as e:
         logger.error(f"Error downloading captions: {str(e)}")
@@ -866,7 +867,7 @@ def generate_ass_captions_v1(video_url, captions, settings, replace, exclude_tim
         subtitle_filename = f"{job_id}.{subtitle_type}"
         subtitle_path = os.path.join(LOCAL_STORAGE_PATH, subtitle_filename)
         try:
-            with open(subtitle_path, 'w', encoding='utf-8') as f:
+            with open(subtitle_path, 'w', encoding='utf-8-sig') as f:
                 f.write(subtitle_content)
             logger.info(f"Job {job_id}: Subtitle file saved to {subtitle_path}")
         except Exception as e:
