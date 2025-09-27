@@ -135,14 +135,24 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             logger.info(f"Job {job_id}: Downloading caption file from {caption_srt}")
             response = requests.get(caption_srt)
             response.raise_for_status()  # Raise an exception for bad status codes
-            if caption_type in ['srt','vtt']:
-                with open(srt_path, 'wb') as srt_file:
-                    srt_file.write(response.content)
+            
+            # SEMPRE pegue o conteúdo como TEXTO. A biblioteca requests faz um bom trabalho
+            # ao decodificar a resposta baseada nos headers do servidor.
+            subtitle_text = response.text
+        
+            # Se for um arquivo .ass, adicione o cabeçalho de estilo
+            if caption_type == 'ass':
+                subtitle_content = caption_style + subtitle_text
             else:
-                subtitle_content = caption_style + response.text
-                with open(srt_path, 'w') as srt_file:
-                    srt_file.write(subtitle_content)
-            logger.info(f"Job {job_id}: Caption file downloaded to {srt_path}")
+                subtitle_content = subtitle_text
+        
+            # AGORA, escreva o conteúdo final no arquivo usando o modo texto 'w'
+            # e especificando a codificação correta para evitar erros.
+            # Usar 'utf-8-sig' é a prática mais segura para legendas.
+            with open(srt_path, 'w', encoding='utf-8-sig') as srt_file:
+                srt_file.write(subtitle_content)
+        
+            logger.info(f"Job {job_id}: Caption file downloaded and saved correctly to {srt_path}")
         else:
             # Write caption_srt content directly to file
             subtitle_content = caption_style + caption_srt
