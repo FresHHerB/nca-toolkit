@@ -163,7 +163,7 @@ def is_url(string):
     except:
         return False
 
-def docaptions_url):
+def download_captions(captions_url)):
     """Download captions from the given URL."""
     try:
         logger.info(f"Downloading captions from URL: {captions_url}")
